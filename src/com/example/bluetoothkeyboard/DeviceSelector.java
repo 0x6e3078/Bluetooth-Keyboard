@@ -1,13 +1,27 @@
 package com.example.bluetoothkeyboard;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.Intent;
 import android.view.Menu;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 // Client (sender) code
+
+
 public class DeviceSelector extends Activity {
+	private final static int REQUEST_ENABLE_BT = 1;
 
 
 	@Override
@@ -28,7 +42,7 @@ public class DeviceSelector extends Activity {
 				public void onClick(DialogInterface dialog, int which)
 				{
 					Intent main = new Intent(Intent.ACTION_MAIN);
-					main.addCatagory(Intent.CATEGORY_HOME);
+					main.addCategory(Intent.CATEGORY_HOME);
 					main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(main);
 				}
@@ -45,21 +59,22 @@ public class DeviceSelector extends Activity {
 			startActivityForResult(enable_bt, REQUEST_ENABLE_BT);
 		}
 		
-		Set<BluetoothDevice> paired_devices = bluetoothAdapter.getBondedDevices();
+		Set<BluetoothDevice> paired_devices = bt_adapter.getBondedDevices();
 		
 		if(paired_devices.size() > 0)
 		{
-			final StableBluetoothArrayAdapter list_adapter = new StableBluetoothArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+			final BluetoothDeviceArrayAdapter list_adapter = new BluetoothDeviceArrayAdapter(this, android.R.layout.simple_list_item_1, paired_devices);
 			final ListView list_view = (ListView) findViewById(R.id.list);
-			listview.setAdapter(list_adapter);
-			listview.setOnItemClicker
+			list_view.setAdapter(list_adapter);
+			//TODO: Set up item selection to go to next activity. MAKE SURE TO
+            //READ Keyboard.java TO SEE WHAT EXTRAS ARE NEEDED IN INTENT.
 		}
 		else
 		{
 			AlertDialog.Builder dlg = new AlertDialog.Builder(this);
 			dlg.setTitle("No Paired Devices Found");
 			dlg.setMessage("Please pair with the device you wish to control before running this application.");
-			dlg.setPositiveButton("Ok", new DialogInterface.OnClickListner() {
+			dlg.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				//Launch Bluetooth Settings
 				public void onClick(DialogInterface dialog,int which)
 				{
@@ -86,32 +101,35 @@ public class DeviceSelector extends Activity {
 
 }
 
-private class BluetoothDeviceArrayAdapter extends ArrayAdapter<String>
+class BluetoothDeviceArrayAdapter extends ArrayAdapter<String>
 {
 	HashMap<String, Integer> m_id_map = new HashMap<String,Integer>();
-	public BluetoothArrayAdapter(Context in_context, int in_text_id, Set<BluetoothDevice> in_bt_objects)
+	public BluetoothDeviceArrayAdapter(Context in_context, int in_text_id, Set<BluetoothDevice> in_bt_objects)
 	{
-		List<String> display_names = new List<String>();
-
-		for ( BluetoothDevice btd : in_bt_objects )
-		{
-			display_names.add(btd.getName());
-		}
-
-		super(context, int_text_id, display_names);
+		super(in_context, in_text_id, get_names(in_bt_objects));
+		BluetoothDevice[] bt_obj_array = in_bt_objects.toArray(new BluetoothDevice[0]);
 
 		for(int i = 0; i < in_bt_objects.size(); ++i)
 		{
-			m_id_map.put(in_bt_objects.get(i).getName(), i);
+			m_id_map.put(bt_obj_array[i].getName(), i);
 		}
 
 	}
-
-	@Override
+		@Override
 	public long getItemId(int position) 
 	{
 		String item = getItem(position);
 		return m_id_map.get(item);
+	}
+	private static List<String> get_names(Set<BluetoothDevice> in_bt_obj)
+	{
+		List<String> names = new ArrayList<String>();
+		for ( BluetoothDevice btd : in_bt_obj )
+		{
+			names.add(btd.getName());
+		}
+		
+		return names;
 	}
 
 	@Override

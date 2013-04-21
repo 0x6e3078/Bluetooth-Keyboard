@@ -26,6 +26,10 @@
             android:name="com.example.bluetoothkeyboard.DeviceSelector"
             android:label="@string/title_activity_device_selector" >
         </activity>
+        <activity
+            android:name="com.example.bluetoothkeyboard.Keyboard"
+            android:label="@string/title_activity_keyboard" >
+        </activity>
     </application>
 
 </manifest>
