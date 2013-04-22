@@ -7,14 +7,16 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.bluetoothkeyboard.MainActivity"
+            android:name="com.example.bluetoothkeyboard.DeviceSelector"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,10 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.bluetoothkeyboard.DeviceSelector"
-            android:label="@string/title_activity_device_selector" >
-        </activity>
+
         <activity
             android:name="com.example.bluetoothkeyboard.Keyboard"
             android:label="@string/title_activity_keyboard" >

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.app.Activity;
 import android.view.Menu;
+import android.widget.Toast;
 import android.bluetooth.*;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -71,7 +72,8 @@ public class Keyboard extends Activity {
         m_bt.cancelDiscovery();
 
 
-        //TODO: Prompt user somehow, that we're doing something.
+        //TODO: Prompt user that it's connecting
+        Toast.makeText(this, "Connecting...", Toast.LENGTH_LONG).show();
         try
         {
             m_bt_socket.connect();
