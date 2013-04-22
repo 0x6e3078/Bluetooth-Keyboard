@@ -7,7 +7,10 @@ import java.io.OutputStream;
 import android.os.Bundle;
 import android.content.Intent;
 import android.app.Activity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.bluetooth.*;
 import android.app.AlertDialog;
@@ -18,6 +21,9 @@ public class Keyboard extends Activity {
     private BluetoothDevice m_device;
     private BluetoothAdapter m_bt;
     private BluetoothThread m_thread;
+    
+    private EditText mOutEditText;
+    private String str;
 
     //TODO: On KeyUp/OnKeyDown methods. MAKE SURE TO IGNORE KEYS UNTIL
     //m_bt_socket.isConnected() is true, in case of hardware keyboard.
@@ -104,10 +110,43 @@ public class Keyboard extends Activity {
             dlg.show();
 
         }
-        //TODO: Connected bring up the keyboard, allow for keypresses to go
-        //through.
         
+        //TODO: Connected bring up the keyboard, allow for keypresses to go through.
+        // Initialize the compose field with a listener for the return key
+        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+        TextWatcher tWatcher = new TextWatcher()
+        {
+        	@Override
+        	public void onTextChanged(CharSequence s, int start, int before, int count)
+        	{
+        		if (s.length() > 0)
+        		{
+        			System.out.println(s.charAt(s.length()-1));
+        			str = Character.toString(s.charAt(s.length()-1));
+        			byte[] theByteArray = str.getBytes();
+        			KeyPacket aKeyPacket = new KeyPacket(theByteArray);
+                    //m_thread.write(theByteArray);
+        		}
+    			
+        	}
+        	
+        	@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+				
+			}
+        };
+        mOutEditText.addTextChangedListener(tWatcher);
+
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

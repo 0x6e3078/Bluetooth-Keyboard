@@ -14,8 +14,10 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView;
 
 // Client (sender) code
 
@@ -68,6 +70,15 @@ public class DeviceSelector extends Activity {
 			list_view.setAdapter(list_adapter);
 			//TODO: Set up item selection to go to next activity. MAKE SURE TO
             //READ Keyboard.java TO SEE WHAT EXTRAS ARE NEEDED IN INTENT.
+			list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+					Intent intent = new Intent(v.getContext(), KeyPacket.class);
+					intent.putExtra("DeviceName", list_adapter.getItemId(position));
+					//intent.putExtra("DeviceAddress", "foo");
+					//intent.putExtra("BluetoothAdapter", "foo");
+	        		startActivityForResult(intent, 0);
+				}
+			});
 		}
 		else
 		{
